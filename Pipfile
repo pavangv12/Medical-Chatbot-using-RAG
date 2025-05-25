@@ -9,6 +9,7 @@ langchain-community = "*"
 langchain-huggingface = "*"
 faiss-cpu = "*"
 pypdf = "*"
+python-dotenv = "*"
 streamlit = "*"
 
 [dev-packages]

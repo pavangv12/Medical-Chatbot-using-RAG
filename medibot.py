@@ -8,11 +8,6 @@ from langchain_community.vectorstores import FAISS
 from langchain_core.prompts import PromptTemplate
 from langchain_huggingface import HuggingFaceEndpoint
 
-## Uncomment the following files if you're not using pipenv as your virtual environment manager
-#from dotenv import load_dotenv, find_dotenv
-#load_dotenv(find_dotenv())
-
-
 DB_FAISS_PATH="vectorstore/db_faiss"
 @st.cache_resource
 def get_vectorstore():
@@ -26,18 +21,17 @@ def set_custom_prompt(custom_prompt_template):
     return prompt
 
 
-def load_llm(huggingface_repo_id, HF_TOKEN):
-    llm=HuggingFaceEndpoint(
+
+def load_llm(huggingface_repo_id):
+    llm = HuggingFaceEndpoint(
         repo_id=huggingface_repo_id,
         temperature=0.5,
-        model_kwargs={"token":HF_TOKEN,
-                      "max_length":"512"}
-    )
+        max_new_tokens=512,
+        )
     return llm
 
-
 def main():
-    st.title("Ask Chatbot!")
+    st.title("Ask MediBot")
 
     if 'messages' not in st.session_state:
         st.session_state.messages = []
@@ -71,7 +65,7 @@ def main():
                 st.error("Failed to load the vector store")
 
             qa_chain=RetrievalQA.from_chain_type(
-                llm=load_llm(huggingface_repo_id=HUGGINGFACE_REPO_ID, HF_TOKEN=HF_TOKEN),
+                llm=load_llm(huggingface_repo_id=HUGGINGFACE_REPO_ID),
                 chain_type="stuff",
                 retriever=vectorstore.as_retriever(search_kwargs={'k':3}),
                 return_source_documents=True,
